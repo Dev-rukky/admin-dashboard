@@ -1,15 +1,16 @@
-import { GitHubBanner, Refine, WelcomePage } from "@refinedev/core";
+import { Authenticated, GitHubBanner, Refine, WelcomePage } from "@refinedev/core";
 import { DevtoolsPanel, DevtoolsProvider } from "@refinedev/devtools";
 import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
 
 import { useNotificationProvider } from "@refinedev/antd";
 import "@refinedev/antd/dist/reset.css";
 
-import dataProvider, { GraphQLClient, liveProvider,} from "@refinedev/nestjs-query";
-import routerBindings, { DocumentTitleHandler, UnsavedChangesNotifier, } from "@refinedev/react-router-v6";
+import { authProvider, dataProvider, liveProvider } from "./providers";
+import routerBindings, { CatchAllNavigate, DocumentTitleHandler, UnsavedChangesNotifier, } from "@refinedev/react-router-v6";
 import { App as AntdApp } from "antd";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
+import { Home, Login, ForgotPassword, Register } from "./pages";
 
 
 
@@ -22,11 +23,11 @@ function App() {
           <AntdApp>
             <DevtoolsProvider>
               <Refine
-                // dataProvider={dataProvider(gqlClient)}
-                // liveProvider={liveProvider(wsClient)}
+                dataProvider={dataProvider}
+                liveProvider={liveProvider}
                 notificationProvider={useNotificationProvider}
                 routerProvider={routerBindings}
-                // authProvider={}
+                authProvider={authProvider}
                 options={{
                   syncWithLocation: true,
                   warnWhenUnsavedChanges: true,
@@ -37,7 +38,16 @@ function App() {
               >
                 <Routes>
                   <Route index element={<WelcomePage />} />
+                  <Route index element={<Home />} />
+                  <Route path="/register" element={<Register />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/forget-password" element={<ForgotPassword />} />
+
+                  <Route element={<Authenticated key="authenticated-layout" fallback={<CatchAllNavigate to="/login" />}/>}>
+
+                  </Route>
                 </Routes>
+
                 <RefineKbar />
                 <UnsavedChangesNotifier />
                 <DocumentTitleHandler />

@@ -1,24 +1,28 @@
 import { useGetIdentity } from "@refinedev/core";
 import { Avatar as AntdAvatar, AvatarProps } from "antd";
-import type { User } from '@/graphql/schema.types'
+import type { User } from "@/graphql/schema.types";
+import { getNameInitials } from "@/utilities";
 
 type Props = AvatarProps & {
-    name: string;
-}
+  name?: string;
+};
 
-const CustomAvatar = ({ name, styles, ...rest }: Props) => {
-    const {data: user} = useGetIdentity<User>()
+const CustomAvatar = ({ name, style, ...rest }: Props) => {
+  const { data: user } = useGetIdentity<User>();
   return (
-    <AntdAvatar 
-        alt="Dev Rukky" 
-        size="small" 
-        style={{ 
-            backgroundColor: '#87d068',
-            display: 'flex',
-            alignItems: 'center',
-            border: 'none'
-        }}>
-        {name}
+    <AntdAvatar
+      alt={name}
+      size="small"
+      style={{
+        backgroundColor: "#87d068",
+        display: "flex",
+        alignItems: "center",
+        border: "none",
+        ...style,
+      }}
+      {...rest}
+    >
+      {getNameInitials(name || "")}
     </AntdAvatar>
   );
 };

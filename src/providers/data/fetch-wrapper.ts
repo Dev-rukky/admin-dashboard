@@ -46,7 +46,7 @@ const getGraphQLErrors = (
   return null;
 };
 
-export  const fetchWrapper = async (url: string, options: RequestInit) => {
+export const fetchWrapper = async (url: string, options: RequestInit) => {
   const response = await customFetch(url, options);
 
   const responseClone = response.clone();
@@ -54,7 +54,7 @@ export  const fetchWrapper = async (url: string, options: RequestInit) => {
   const body = await responseClone.json();
 
   const errors = getGraphQLErrors(body);
-  
+
   if (errors) {
     throw errors;
   }

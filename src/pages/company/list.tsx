@@ -1,10 +1,11 @@
-import CustomAvatar from '@/components/custom-avatar';
-import { Text } from '@/components/text';
-import { COMPANIES_LIST_QUERY } from '@/graphql/queries';
-import { Company } from '@/graphql/schema.types';
-import { CompaniesListQuery } from '@/graphql/types';
-import { currencyNumber } from '@/utilities';
-import { SearchOutlined } from '@ant-design/icons';
+import CustomAvatar from "@/components/custom-avatar";
+import { Text } from "@/components/text";
+import { COMPANIES_LIST_QUERY } from "@/graphql/queries";
+import { Company } from "@/graphql/schema.types";
+
+import { CompaniesListQuery } from "@/graphql/types";
+import { currencyNumber } from "@/utilities";
+import { SearchOutlined } from "@ant-design/icons";
 import {
   CreateButton,
   DeleteButton,
@@ -12,10 +13,12 @@ import {
   FilterDropdown,
   List,
   useTable,
-} from '@refinedev/antd';
-import { HttpError, getDefaultFilter, useGo } from '@refinedev/core';
-import { GetFieldsFromList } from '@refinedev/nestjs-query';
-import { Input, Space, Table } from 'antd';
+} from "@refinedev/antd";
+import { HttpError, getDefaultFilter, useGo } from "@refinedev/core";
+import { GetFieldsFromList } from "@refinedev/nestjs-query";
+import { Input, Space, Table } from "antd";
+
+import { ColumnProps } from "antd/es/table";
 
 export const CompanyList = ({ children }: React.PropsWithChildren) => {
   const go = useGo();
@@ -24,12 +27,12 @@ export const CompanyList = ({ children }: React.PropsWithChildren) => {
     HttpError,
     GetFieldsFromList<CompaniesListQuery>
   >({
-    resource: 'companies',
+    resource: "companies",
     onSearch: (values) => {
       return [
         {
-          field: 'name',
-          operator: 'contains',
+          field: "name",
+          operator: "contains",
           value: values.name,
         },
       ];
@@ -40,16 +43,16 @@ export const CompanyList = ({ children }: React.PropsWithChildren) => {
     sorters: {
       initial: [
         {
-          field: 'createdAt',
-          order: 'desc',
+          field: "createdAt",
+          order: "desc",
         },
       ],
     },
     filters: {
       initial: [
         {
-          field: 'name',
-          operator: 'contains',
+          field: "name",
+          operator: "contains",
           value: undefined,
         },
       ],
@@ -61,41 +64,43 @@ export const CompanyList = ({ children }: React.PropsWithChildren) => {
 
   return (
     <div>
-      <List breadcrumb={false} headerButtons={() => (
-        <CreateButton
-          onClick={() => {
-            go({
-              to: {
-                resource: 'companies',
-                action: 'create',
-              },
-              options: {
-                keepQuery: true,
-              },
-              type: 'replace',
-            });
-          }}
-        />
-      )}>
+      <List
+        breadcrumb={false}
+        headerButtons={() => (
+          <CreateButton
+            onClick={() => {
+              go({
+                to: {
+                  resource: "companies",
+                  action: "create",
+                },
+                options: {
+                  keepQuery: true,
+                },
+                type: "replace",
+              });
+            }}
+          />
+        )}
+      >
         <Table {...tableProps} pagination={{ ...tableProps.pagination }}>
           <Table.Column<Company>
+            key="name"
             dataIndex="name"
             title="Company Title"
-            defaultFilteredValue={getDefaultFilter('id', filters)}
-            filterIcon={<SearchOutlined />}
-            filterDropdown={(props) => (
-              <FilterDropdown {...props}>
-                <Input placeholder="Search Company" />
-              </FilterDropdown>
-            )}
             render={(value, record) => (
               <Space>
-                <CustomAvatar shape="square" name={record.name} src={record.avatarUrl} />
-                <Text style={{ whiteSpace: 'nowrap' }}>{record.name}</Text>
+                <CustomAvatar
+                  shape="square"
+                  name={record.name}
+                  src={record.avatarUrl}
+                />
+                <Text style={{ whiteSpace: "nowrap" }}>{record.name}</Text>
               </Space>
             )}
           />
           <Table.Column<Company>
+            key="totalRevenue"
             dataIndex="totalRevenue"
             title="Open deals amount"
             render={(value, company) => (
@@ -105,13 +110,12 @@ export const CompanyList = ({ children }: React.PropsWithChildren) => {
             )}
           />
           <Table.Column<Company>
-            dataIndex="id"
+            key="actions"
             title="Actions"
-            fixed="right"
-            render={(value) => (
+            render={(_, record) => (
               <Space>
-                <EditButton hideText size="small" recordItemId={value} />
-                <DeleteButton hideText size="small" recordItemId={value} />
+                <EditButton hideText size="small" recordItemId={record.id} />
+                <DeleteButton hideText size="small" recordItemId={record.id} />
               </Space>
             )}
           />

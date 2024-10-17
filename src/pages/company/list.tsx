@@ -62,6 +62,44 @@ export const CompanyList = ({ children }: React.PropsWithChildren) => {
     },
   });
 
+  const columns: ColumnProps<Company>[] = [
+    {
+      key: "name",
+      dataIndex: "name",
+      title: "Company Title",
+      render: (value, record) => (
+        <Space>
+          <CustomAvatar
+            shape="square"
+            name={record.name}
+            src={record.avatarUrl}
+          />
+          <Text style={{ whiteSpace: "nowrap" }}>{record.name}</Text>
+        </Space>
+      ),
+    },
+    {
+      key: "totalRevenue",
+      dataIndex: "totalRevenue",
+      title: "Open deals amount",
+      render: (value, company) => (
+        <Text>
+          {currencyNumber(company?.dealsAggregate?.[0].sum?.value || 0)}
+        </Text>
+      ),
+    },
+    {
+      key: "actions",
+      title: "Actions",
+      render: (_, record) => (
+        <Space>
+          <EditButton hideText size="small" recordItemId={record.id} />
+          <DeleteButton hideText size="small" recordItemId={record.id} />
+        </Space>
+      ),
+    },
+  ];
+
   return (
     <div>
       <List
@@ -83,43 +121,11 @@ export const CompanyList = ({ children }: React.PropsWithChildren) => {
           />
         )}
       >
-        <Table {...tableProps} pagination={{ ...tableProps.pagination }}>
-          <Table.Column<Company>
-            key="name"
-            dataIndex="name"
-            title="Company Title"
-            render={(value, record) => (
-              <Space>
-                <CustomAvatar
-                  shape="square"
-                  name={record.name}
-                  src={record.avatarUrl}
-                />
-                <Text style={{ whiteSpace: "nowrap" }}>{record.name}</Text>
-              </Space>
-            )}
-          />
-          <Table.Column<Company>
-            key="totalRevenue"
-            dataIndex="totalRevenue"
-            title="Open deals amount"
-            render={(value, company) => (
-              <Text>
-                {currencyNumber(company?.dealsAggregate?.[0].sum?.value || 0)}
-              </Text>
-            )}
-          />
-          <Table.Column<Company>
-            key="actions"
-            title="Actions"
-            render={(_, record) => (
-              <Space>
-                <EditButton hideText size="small" recordItemId={record.id} />
-                <DeleteButton hideText size="small" recordItemId={record.id} />
-              </Space>
-            )}
-          />
-        </Table>
+        <Table
+          {...tableProps}
+          columns={columns}
+          pagination={tableProps.pagination}
+        />
       </List>
       {children}
     </div>
